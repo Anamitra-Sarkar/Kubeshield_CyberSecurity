@@ -1,0 +1,48 @@
+---
+# Test pod with privileged container - will be terminated by ShieldPolicy
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-privileged-pod
+  namespace: default
+  labels:
+    app: test-privileged
+spec:
+  containers:
+    - name: privileged-container
+      image: alpine:latest
+      command: ["sh", "-c", "echo 'This pod should be terminated' && sleep 3600"]
+      securityContext:
+        privileged: true
+---
+# Test pod from disallowed registry - will be terminated by ShieldPolicy
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-disallowed-registry
+  namespace: default
+  labels:
+    app: test-registry
+spec:
+  containers:
+    - name: untrusted-container
+      image: untrusted-registry.io/malicious:latest
+      command: ["sh", "-c", "sleep 3600"]
+---
+# Safe pod - will NOT be terminated
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-safe-pod
+  namespace: default
+  labels:
+    app: test-safe
+spec:
+  containers:
+    - name: safe-container
+      image: docker.io/library/alpine:latest
+      command: ["sh", "-c", "echo 'This pod is safe' && sleep 3600"]
+      securityContext:
+        privileged: false
+        runAsNonRoot: true
+        runAsUser: 1000

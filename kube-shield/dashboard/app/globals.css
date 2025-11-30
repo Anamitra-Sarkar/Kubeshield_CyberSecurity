@@ -1,0 +1,156 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Force dark mode */
+:root {
+  color-scheme: dark;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for terminal */
+.terminal-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.terminal-scroll::-webkit-scrollbar-track {
+  background: rgb(15, 23, 42);
+}
+
+.terminal-scroll::-webkit-scrollbar-thumb {
+  background: rgb(51, 65, 85);
+  border-radius: 4px;
+}
+
+.terminal-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgb(71, 85, 105);
+}
+
+/* Animation for live indicator */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 8px currentColor;
+  }
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 16px currentColor;
+  }
+}
+
+.live-indicator {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.2s ease-in-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Tremor overrides for dark mode */
+.dark .tremor-Card-root {
+  --tw-bg-opacity: 1;
+  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+}
+
+.dark .tremor-content-emphasis {
+  color: rgb(243 244 246);
+}
+
+.dark .tremor-content-default {
+  color: rgb(156 163 175);
+}
+
+.dark .tremor-content-subtle {
+  color: rgb(107 114 128);
+}
+
+/* Grid line colors for charts */
+.dark .recharts-cartesian-grid line {
+  stroke: rgb(51 65 85);
+}
+
+.dark .recharts-cartesian-axis line {
+  stroke: rgb(51 65 85);
+}
+
+.dark .recharts-cartesian-axis text {
+  fill: rgb(156 163 175);
+}
+
+/* Gradient background */
+.gradient-bg {
+  background: linear-gradient(
+    135deg,
+    rgb(15 23 42) 0%,
+    rgb(30 41 59) 50%,
+    rgb(15 23 42) 100%
+  );
+}
+
+/* Scanline effect for terminal (subtle) */
+.scanlines {
+  position: relative;
+}
+
+.scanlines::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.15;
+}
+
+/* Text glow for status */
+.text-glow-emerald {
+  text-shadow: 0 0 10px rgb(16 185 129 / 0.5);
+}
+
+.text-glow-rose {
+  text-shadow: 0 0 10px rgb(244 63 94 / 0.5);
+}
+
+.text-glow-amber {
+  text-shadow: 0 0 10px rgb(245 158 11 / 0.5);
+}
+
+/* Loading skeleton */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgb(30 41 59) 25%,
+    rgb(51 65 85) 50%,
+    rgb(30 41 59) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}

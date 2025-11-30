@@ -1,0 +1,121 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: shieldpolicies.shield.kubeshield.io
+  labels:
+    app.kubernetes.io/name: kube-shield
+    app.kubernetes.io/component: crd
+spec:
+  group: shield.kubeshield.io
+  names:
+    kind: ShieldPolicy
+    listKind: ShieldPolicyList
+    plural: shieldpolicies
+    singular: shieldpolicy
+    shortNames:
+      - sp
+      - shieldpolicy
+  scope: Cluster
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+        - name: Mode
+          type: string
+          jsonPath: .spec.enforcementMode
+        - name: Block Privileged
+          type: boolean
+          jsonPath: .spec.blockPrivileged
+        - name: Violations
+          type: integer
+          jsonPath: .status.violationsCount
+        - name: Terminations
+          type: integer
+          jsonPath: .status.terminationsCount
+        - name: Phase
+          type: string
+          jsonPath: .status.phase
+        - name: Age
+          type: date
+          jsonPath: .metadata.creationTimestamp
+      schema:
+        openAPIV3Schema:
+          type: object
+          required:
+            - spec
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
+            metadata:
+              type: object
+            spec:
+              type: object
+              required:
+                - blockPrivileged
+              properties:
+                blockPrivileged:
+                  type: boolean
+                  description: Whether privileged containers should be blocked and terminated
+                allowedRegistries:
+                  type: array
+                  items:
+                    type: string
+                  description: List of container registries that are allowed
+                enforcementMode:
+                  type: string
+                  enum:
+                    - Enforce
+                    - Audit
+                    - Disabled
+                  default: Enforce
+                  description: How the policy should be enforced
+                targetNamespaces:
+                  type: array
+                  items:
+                    type: string
+                  description: Namespaces to which this policy applies (empty = all except kube-system)
+            status:
+              type: object
+              properties:
+                phase:
+                  type: string
+                  enum:
+                    - Active
+                    - Inactive
+                    - Error
+                lastEnforcementTime:
+                  type: string
+                  format: date-time
+                violationsCount:
+                  type: integer
+                  format: int64
+                terminationsCount:
+                  type: integer
+                  format: int64
+                observedGeneration:
+                  type: integer
+                  format: int64
+                message:
+                  type: string
+                conditions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      status:
+                        type: string
+                      reason:
+                        type: string
+                      message:
+                        type: string
+                      lastTransitionTime:
+                        type: string
+                        format: date-time
