@@ -1,0 +1,16 @@
+---
+# Example ShieldPolicy for blocking privileged containers
+apiVersion: shield.kubeshield.io/v1alpha1
+kind: ShieldPolicy
+metadata:
+  name: default-security-policy
+spec:
+  blockPrivileged: true
+  enforcementMode: Enforce
+  allowedRegistries:
+    - "docker.io"
+    - "gcr.io"
+    - "ghcr.io"
+    - "quay.io"
+    - "registry.k8s.io"
+  targetNamespaces: []  # Empty means all namespaces except kube-system
