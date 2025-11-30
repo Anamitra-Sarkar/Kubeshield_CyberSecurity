@@ -160,6 +160,22 @@ func (r *PodReconciler) checkPodViolations(
 	var violations []SecurityEvent
 	now := time.Now().UTC().Format(time.RFC3339)
 
+	// Pod-level checks (host network)
+	if pod.Spec.HostNetwork {
+		violations = append(violations, SecurityEvent{
+			Timestamp:   now,
+			EventType:   "HOST_NETWORK",
+			Severity:    "HIGH",
+			PodName:     pod.Name,
+			Namespace:   pod.Namespace,
+			Reason:      "Pod using host network",
+			Action:      "AUDIT",
+			PolicyName:  policy.Name,
+			NodeName:    pod.Spec.NodeName,
+			Description: fmt.Sprintf("Pod '%s' is using host network which can bypass network policies", pod.Name),
+		})
+	}
+
 	// Check all containers (including init containers)
 	allContainers := append(pod.Spec.Containers, pod.Spec.InitContainers...)
 
@@ -224,24 +240,6 @@ func (r *PodReconciler) checkPodViolations(
 					PolicyName:  policy.Name,
 					NodeName:    pod.Spec.NodeName,
 					Description: fmt.Sprintf("Container '%s' is configured to run as root (UID 0)", container.Name),
-				})
-			}
-
-			// Check for host network
-			if pod.Spec.HostNetwork {
-				violations = append(violations, SecurityEvent{
-					Timestamp:   now,
-					EventType:   "HOST_NETWORK",
-					Severity:    "HIGH",
-					PodName:     pod.Name,
-					Namespace:   pod.Namespace,
-					Container:   container.Name,
-					Image:       container.Image,
-					Reason:      "Pod using host network",
-					Action:      "AUDIT",
-					PolicyName:  policy.Name,
-					NodeName:    pod.Spec.NodeName,
-					Description: fmt.Sprintf("Pod '%s' is using host network which can bypass network policies", pod.Name),
 				})
 			}
 		}
